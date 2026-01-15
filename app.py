@@ -523,7 +523,90 @@ if st.session_state.app_mode == "Marketing Strategy":
                         st.session_state.competitive_forces[key] = option
             
             if key in st.session_state.competitive_forces:
-                st.info("### 📦 Distribution Strategy")
+                st.success(f"✓ Selected: {st.session_state.competitive_forces[key]}")
+    
+    # Step 5: Distribution Channel
+    elif st.session_state.step == 5:
+        st.header("Step 5: Distribution Channel Strategy")
+        st.markdown("Configure your distribution approach")
+        
+        st.info("**Distribution Channel Selection Framework**\n\nChoose based on product customization level and target market concentration")
+        
+        st.subheader("Product Customization Level")
+        cols = st.columns(2)
+        with cols[0]:
+            if st.button("**High Customization**\n\nTailored products, bespoke services", key="cust_high", use_container_width=True):
+                st.session_state.distribution_config['customization'] = 'high'
+        with cols[1]:
+            if st.button("**Low Customization**\n\nStandardized products, mass market", key="cust_low", use_container_width=True):
+                st.session_state.distribution_config['customization'] = 'low'
+        
+        if st.session_state.distribution_config['customization']:
+            st.success(f"✓ Selected: {st.session_state.distribution_config['customization'].title()} Customization")
+        
+        st.subheader("Target Market Concentration")
+        cols = st.columns(2)
+        with cols[0]:
+            if st.button("**Concentrated Market**\n\nFew large customers, B2B, niche segments", key="market_conc", use_container_width=True):
+                st.session_state.distribution_config['market_concentration'] = 'concentrated'
+        with cols[1]:
+            if st.button("**Fragmented Market**\n\nMany small customers, B2C, mass market", key="market_frag", use_container_width=True):
+                st.session_state.distribution_config['market_concentration'] = 'fragmented'
+        
+        if st.session_state.distribution_config['market_concentration']:
+            st.success(f"✓ Selected: {st.session_state.distribution_config['market_concentration'].title()} Market")
+        
+        # Show recommendation
+        channel = get_distribution_recommendation()
+        if channel:
+            st.markdown("---")
+            st.success("### 🎯 Recommended Distribution Channel")
+            st.markdown(f"## {channel['name']}")
+            st.markdown(f"**Model:** {channel['model']}")
+            st.markdown(channel['description'])
+            
+            cols = st.columns(2)
+            with cols[0]:
+                st.markdown("**✓ Pros:**")
+                for pro in channel['pros']:
+                    st.markdown(f"- {pro}")
+            with cols[1]:
+                st.markdown("**⚠ Cons:**")
+                for con in channel['cons']:
+                    st.markdown(f"- {con}")
+            
+            st.subheader("Select Specific Channel Type")
+            st.session_state.selected_channel = st.selectbox(
+                "Choose a channel option:",
+                [''] + channel['examples'],
+                index=0 if not st.session_state.selected_channel else 
+                      channel['examples'].index(st.session_state.selected_channel) + 1 
+                      if st.session_state.selected_channel in channel['examples'] else 0
+            )
+            
+            if st.session_state.selected_channel:
+                if st.button("📱 Book Channel Setup via WhatsApp", use_container_width=True, type="primary"):
+                    whatsapp_url = generate_whatsapp_message()
+                    st.markdown(f"[Click here to open WhatsApp]({whatsapp_url})")
+    
+    # Step 6: Results
+    elif st.session_state.step == 6:
+        st.header("Complete Marketing Recommendations")
+        st.markdown("Strategic recommendations based on your inputs")
+        
+        recommendations = get_recommendations()
+        
+        st.success(f"### 🎯 Core Strategy: {recommendations['strategy']}")
+        
+        cols = st.columns(2)
+        with cols[0]:
+            st.info("### 📈 Promotion Strategy")
+            st.markdown(recommendations['promotion'])
+        with cols[1]:
+            st.info("### 💰 Pricing Strategy")
+            st.markdown(recommendations['pricing'])
+        
+        st.info("### 📦 Distribution Strategy")
         st.markdown(recommendations['distribution'])
         
         if st.session_state.selected_channel:
@@ -718,87 +801,4 @@ st.markdown("""
     <p><strong>Marketing Strategy & Promotion Mix Tool</strong></p>
     <p>Built with Streamlit | Based on established marketing frameworks</p>
 </div>
-""", unsafe_allow_html=True)(f"✓ Selected: {st.session_state.competitive_forces[key]}")
-    
-    # Step 5: Distribution Channel
-elif st.session_state.step == 5:
-        st.header("Step 5: Distribution Channel Strategy")
-        st.markdown("Configure your distribution approach")
-        
-        st.info("**Distribution Channel Selection Framework**\n\nChoose based on product customization level and target market concentration")
-        
-        st.subheader("Product Customization Level")
-        cols = st.columns(2)
-        with cols[0]:
-            if st.button("**High Customization**\n\nTailored products, bespoke services", key="cust_high", use_container_width=True):
-                st.session_state.distribution_config['customization'] = 'high'
-        with cols[1]:
-            if st.button("**Low Customization**\n\nStandardized products, mass market", key="cust_low", use_container_width=True):
-                st.session_state.distribution_config['customization'] = 'low'
-        
-        if st.session_state.distribution_config['customization']:
-            st.success(f"✓ Selected: {st.session_state.distribution_config['customization'].title()} Customization")
-        
-        st.subheader("Target Market Concentration")
-        cols = st.columns(2)
-        with cols[0]:
-            if st.button("**Concentrated Market**\n\nFew large customers, B2B, niche segments", key="market_conc", use_container_width=True):
-                st.session_state.distribution_config['market_concentration'] = 'concentrated'
-        with cols[1]:
-            if st.button("**Fragmented Market**\n\nMany small customers, B2C, mass market", key="market_frag", use_container_width=True):
-                st.session_state.distribution_config['market_concentration'] = 'fragmented'
-        
-        if st.session_state.distribution_config['market_concentration']:
-            st.success(f"✓ Selected: {st.session_state.distribution_config['market_concentration'].title()} Market")
-        
-        # Show recommendation
-        channel = get_distribution_recommendation()
-        if channel:
-            st.markdown("---")
-            st.success("### 🎯 Recommended Distribution Channel")
-            st.markdown(f"## {channel['name']}")
-            st.markdown(f"**Model:** {channel['model']}")
-            st.markdown(channel['description'])
-            
-            cols = st.columns(2)
-            with cols[0]:
-                st.markdown("**✓ Pros:**")
-                for pro in channel['pros']:
-                    st.markdown(f"- {pro}")
-            with cols[1]:
-                st.markdown("**⚠ Cons:**")
-                for con in channel['cons']:
-                    st.markdown(f"- {con}")
-            
-            st.subheader("Select Specific Channel Type")
-            st.session_state.selected_channel = st.selectbox(
-                "Choose a channel option:",
-                [''] + channel['examples'],
-                index=0 if not st.session_state.selected_channel else 
-                      channel['examples'].index(st.session_state.selected_channel) + 1 
-                      if st.session_state.selected_channel in channel['examples'] else 0
-            )
-            
-            if st.session_state.selected_channel:
-                if st.button("📱 Book Channel Setup via WhatsApp", use_container_width=True, type="primary"):
-                    whatsapp_url = generate_whatsapp_message()
-                    st.markdown(f"[Click here to open WhatsApp]({whatsapp_url})")
-    
-    # Step 6: Results
-    elif st.session_state.step == 6:
-        st.header("Complete Marketing Recommendations")
-        st.markdown("Strategic recommendations based on your inputs")
-        
-        recommendations = get_recommendations()
-        
-        st.success(f"### 🎯 Core Strategy: {recommendations['strategy']}")
-        
-        cols = st.columns(2)
-        with cols[0]:
-            st.info("### 📈 Promotion Strategy")
-            st.markdown(recommendations['promotion'])
-        with cols[1]:
-            st.info("### 💰 Pricing Strategy")
-            st.markdown(recommendations['pricing'])
-        
-        st.info
+""", unsafe_allow_html=True)
