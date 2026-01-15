@@ -721,7 +721,7 @@ st.markdown("""
 """, unsafe_allow_html=True)(f"✓ Selected: {st.session_state.competitive_forces[key]}")
     
     # Step 5: Distribution Channel
-    elif st.session_state.step == 5:
+elif st.session_state.step == 5:
         st.header("Step 5: Distribution Channel Strategy")
         st.markdown("Configure your distribution approach")
         
